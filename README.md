@@ -1,6 +1,6 @@
-#🛠️ SILENCIO HARDWARE STORE
+# 🛠️ SILENCIO HARDWARE STORE
 
-**O APP DOS COMPARATIVOS DE HARDWARE QUE VAI TURBINAR SEU PC!**
+## O APP DOS COMPARATIVOS DE HARDWARE QUE VAI TURBINAR SEU PC!
 
 *(Porque montar PC é arte, e arte a gente estuda! 👊🔥)*
 -------------------------------------------------------------------------------------------
