@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.silenciohardwarestore.data.Cpu
@@ -32,6 +31,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun CpuComparisonScreen(
@@ -43,6 +45,9 @@ fun CpuComparisonScreen(
     var showComparison by remember { mutableStateOf(false) }
     var viewMode by remember { mutableStateOf(ViewMode.GRID) }
     var searchQuery by remember { mutableStateOf("") }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.screenWidthDp > configuration.screenHeightDp
+    val density = LocalDensity.current
 
     val filteredCpus = remember(cpus, searchQuery) {
         if (searchQuery.isBlank()) {
@@ -75,13 +80,13 @@ fun CpuComparisonScreen(
                 .fillMaxSize()
                 .background(Color.Black)
         ) {
-            // Header fixo
+            // Header responsivo
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Black)
-                    .padding(16.dp)
-                    .padding(top = 16.dp)
+                    .padding(if (isLandscape) 8.dp else 16.dp)
+                    .padding(top = if (isLandscape) 8.dp else 16.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -94,40 +99,51 @@ fun CpuComparisonScreen(
                             containerColor = Color.Blue,
                             contentColor = Color.White
                         ),
-                        modifier = Modifier.height(48.dp)
+                        modifier = Modifier.height(if (isLandscape) 40.dp else 48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Voltar",
                             tint = Color.White,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(if (isLandscape) 14.dp else 16.dp)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("Voltar", fontSize = 14.sp)
+                        if (!isLandscape) {
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Voltar", fontSize = if (isLandscape) 12.sp else 14.sp)
+                        }
                     }
 
                     Text(
                         "Comparar CPUs",
                         style = MaterialTheme.typography.headlineMedium,
                         color = Color.White,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = if (isLandscape) 18.sp else MaterialTheme
+                            .typography.headlineMedium.fontSize,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
 
-                    Spacer(modifier = Modifier.width(48.dp))
+                    Spacer(modifier = Modifier.width(if (isLandscape) 8.dp else 48.dp))
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 16.dp))
 
-                Text(
-                    "Compare CPUs lado a lado",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+                if (!isLandscape) {
+                    Text(
+                        "Compare CPUs lado a lado",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontSize = if (isLandscape) 14.sp else MaterialTheme
+                            .typography.titleMedium.fontSize
+                    )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 24.dp))
+                }
 
                 SearchBox(
                     searchQuery = searchQuery,
@@ -137,7 +153,7 @@ fun CpuComparisonScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 16.dp))
 
                 SelectionBar(
                     selectedCount = selectedCpus.size,
@@ -149,7 +165,8 @@ fun CpuComparisonScreen(
                     },
                     searchQuery = searchQuery,
                     filteredCount = filteredCpus.size,
-                    totalCount = cpus.size
+                    totalCount = cpus.size,
+                    isLandscape = isLandscape
                 )
             }
 
@@ -174,7 +191,8 @@ fun CpuComparisonScreen(
                                 selectedCpus - cpu
                             }
                         },
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        isLandscape = isLandscape
                     )
 
                     ViewMode.LIST -> CpuListView(
@@ -192,22 +210,23 @@ fun CpuComparisonScreen(
                 }
             }
 
-            // Bottom bar fixo com mais espaçamento
+            // Bottom bar responsivo
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Black)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 16.dp,
-                        bottom = 32.dp // Mais espaço inferior
+                        start = if (isLandscape) 8.dp else 16.dp,
+                        end = if (isLandscape) 8.dp else 16.dp,
+                        top = if (isLandscape) 8.dp else 16.dp,
+                        bottom = if (isLandscape) 16.dp else 32.dp
                     )
             ) {
                 CompareButton(
                     enabled = selectedCpus.size == 2,
                     selectedCount = selectedCpus.size,
-                    onClick = { showComparison = true }
+                    onClick = { showComparison = true },
+                    isLandscape = isLandscape
                 )
             }
         }
@@ -274,7 +293,8 @@ fun SelectionBar(
     onClearSelection: () -> Unit,
     searchQuery: String = "",
     filteredCount: Int = 0,
-    totalCount: Int = 0
+    totalCount: Int = 0,
+    isLandscape: Boolean = false
 ) {
     Column {
         Row(
@@ -287,16 +307,17 @@ fun SelectionBar(
                     Text(
                         "Selecionadas: $selectedCount/2",
                         color = if (selectedCount == 2) Color.Green else Color.White,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        fontSize = if (isLandscape) 12.sp else 14.sp
                     )
 
                     if (selectedCount > 0) {
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         TextButton(
                             onClick = onClearSelection,
                             colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
                         ) {
-                            Text("Limpar", fontSize = 12.sp)
+                            Text("Limpar", fontSize = if (isLandscape) 10.sp else 12.sp)
                         }
                     }
                 }
@@ -305,7 +326,7 @@ fun SelectionBar(
                     Text(
                         "📊 Encontradas: $filteredCount de $totalCount CPUs",
                         color = if (filteredCount > 0) Color.Cyan else Color.Yellow,
-                        fontSize = 12.sp,
+                        fontSize = if (isLandscape) 10.sp else 12.sp,
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
@@ -314,7 +335,9 @@ fun SelectionBar(
             Row {
                 FilterChip(
                     onClick = { onViewModeChanged(ViewMode.GRID) },
-                    label = { Text("Grade") },
+                    label = {
+                        Text("Grade", fontSize = if (isLandscape) 10.sp else 12.sp)
+                    },
                     selected = viewMode == ViewMode.GRID,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color.Blue,
@@ -322,11 +345,13 @@ fun SelectionBar(
                     )
                 )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(4.dp))
 
                 FilterChip(
                     onClick = { onViewModeChanged(ViewMode.LIST) },
-                    label = { Text("Lista") },
+                    label = {
+                        Text("Lista", fontSize = if (isLandscape) 10.sp else 12.sp)
+                    },
                     selected = viewMode == ViewMode.LIST,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color.Blue,
@@ -337,7 +362,7 @@ fun SelectionBar(
         }
 
         if (searchQuery.isNotEmpty() && filteredCount == 0) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Yellow.copy(alpha = 0.1f)
@@ -345,15 +370,15 @@ fun SelectionBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.padding(12.dp),
+                    modifier = Modifier.padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("⚠️", fontSize = 16.sp)
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("⚠️", fontSize = 14.sp)
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         "Nenhuma CPU encontrada para \"$searchQuery\"",
                         color = Color.Yellow,
-                        fontSize = 14.sp
+                        fontSize = if (isLandscape) 10.sp else 12.sp
                     )
                 }
             }
@@ -366,20 +391,25 @@ fun CpuGridView(
     cpus: List<Cpu>,
     selectedCpus: List<Cpu>,
     onCpuSelected: (Cpu, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLandscape: Boolean = false
 ) {
+
+    val columns = if (isLandscape) 3 else 2
+
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 280.dp),
+        columns = GridCells.Fixed(columns),
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        contentPadding = PaddingValues(if (isLandscape) 4.dp else 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 4.dp else 8.dp),
+        verticalArrangement = Arrangement.spacedBy(if (isLandscape) 4.dp else 8.dp)
     ) {
         items(cpus) { cpu ->
             CpuGridCard(
                 cpu = cpu,
                 isSelected = selectedCpus.contains(cpu),
-                onSelected = { onCpuSelected(cpu, it) }
+                onSelected = { onCpuSelected(cpu, it) },
+                isLandscape = isLandscape
             )
         }
     }
@@ -411,7 +441,8 @@ fun CpuListView(
 fun CpuGridCard(
     cpu: Cpu,
     isSelected: Boolean,
-    onSelected: (Boolean) -> Unit
+    onSelected: (Boolean) -> Unit,
+    isLandscape: Boolean = false
 ) {
     val borderColor = when {
         isSelected -> Color.Green
@@ -426,15 +457,15 @@ fun CpuGridCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(8.dp))
             .background(backgroundColor)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(8.dp)
             )
             .clickable { onSelected(!isSelected) }
-            .padding(16.dp)
+            .padding(if (isLandscape) 8.dp else 12.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -449,8 +480,9 @@ fun CpuGridCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    maxLines = 2,
+                    maxLines = if (isLandscape) 1 else 2,
                     overflow = TextOverflow.Ellipsis,
+                    fontSize = if (isLandscape) 12.sp else 14.sp,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -459,12 +491,12 @@ fun CpuGridCard(
                         Icons.Default.Check,
                         contentDescription = "Selecionada",
                         tint = Color.Green,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(if (isLandscape) 16.dp else 20.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(if (isLandscape) 4.dp else 6.dp))
 
             Surface(
                 color = if (cpu.brand == "AMD") Color.Red.copy(alpha = 0.2f) else Color.Blue.copy(alpha = 0.2f),
@@ -474,19 +506,19 @@ fun CpuGridCard(
                 Text(
                     cpu.brand,
                     color = if (cpu.brand == "AMD") Color.Red else Color.Blue,
-                    fontSize = 12.sp,
+                    fontSize = if (isLandscape) 10.sp else 12.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(if (isLandscape) 6.dp else 8.dp))
 
-            CpuSpecRow("⚡", "Base", "${cpu.baseClock} GHz")
-            CpuSpecRow("🚀", "Turbo", "${cpu.turboClock} GHz")
-            CpuSpecRow("🔧", "Núcleos", "${cpu.cores}C/${cpu.threads}T")
-            CpuSpecRow("💡", "TDP", "${cpu.tdp}W")
-            CpuSpecRow("🌡️", "Temp", "${cpu.baseTemperature}°C")
+            CpuSpecRow("⚡", "Base", "${cpu.baseClock} GHz", isLandscape)
+            CpuSpecRow("🚀", "Turbo", "${cpu.turboClock} GHz", isLandscape)
+            CpuSpecRow("🔧", "Núcleos", "${cpu.cores}C/${cpu.threads}T", isLandscape)
+            CpuSpecRow("💡", "TDP", "${cpu.tdp}W", isLandscape)
+            CpuSpecRow("🌡️", "Temp", "${cpu.baseTemperature}°C", isLandscape)
         }
     }
 }
@@ -550,7 +582,7 @@ fun CpuListCard(
 }
 
 @Composable
-fun CpuSpecRow(emoji: String, label: String, value: String) {
+fun CpuSpecRow(emoji: String, label: String, value: String, isLandscape: Boolean = false) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -559,56 +591,59 @@ fun CpuSpecRow(emoji: String, label: String, value: String) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 emoji,
-                fontSize = 14.sp,
-                modifier = Modifier.width(20.dp)
+                fontSize = if (isLandscape) 10.sp else 12.sp,
+                modifier = Modifier.width(if (isLandscape) 16.dp else 20.dp)
             )
             Text(
                 label,
                 color = Color.Gray,
-                fontSize = 12.sp
+                fontSize = if (isLandscape) 10.sp else 12.sp
             )
         }
 
         Text(
             value,
             color = Color.White,
-            fontSize = 12.sp,
+            fontSize = if (isLandscape) 10.sp else 12.sp,
             fontWeight = FontWeight.Medium
         )
     }
-    Spacer(modifier = Modifier.height(4.dp))
+    Spacer(modifier = Modifier.height(if (isLandscape) 2.dp else 4.dp))
 }
 
 @Composable
 fun CompareButton(
     enabled: Boolean,
     selectedCount: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isLandscape: Boolean = false
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(if (isLandscape) 44.dp else 56.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (enabled) Color.Green else Color.Gray,
             contentColor = Color.White
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(8.dp)
     ) {
         Icon(
             Icons.Default.Check,
             contentDescription = null,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(if (isLandscape) 16.dp else 20.dp)
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(4.dp))
 
         Text(
             if (selectedCount == 2) "🔥 Comparar CPUs!" else "Selecione 2 CPUs ($selectedCount/2)",
             fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
+            fontSize = if (isLandscape) 12.sp else 14.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
