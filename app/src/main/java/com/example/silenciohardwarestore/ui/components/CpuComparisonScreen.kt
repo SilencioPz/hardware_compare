@@ -74,80 +74,91 @@ fun CpuComparisonScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black)
-                .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Header fixo
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black)
+                    .padding(16.dp)
+                    .padding(top = 16.dp)
             ) {
-                Button(
-                    onClick = onBackClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Blue,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.height(48.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Voltar",
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
+                    Button(
+                        onClick = onBackClick,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Blue,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.height(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Voltar",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Voltar", fontSize = 14.sp)
+                    }
+
+                    Text(
+                        "Comparar CPUs",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Voltar", fontSize = 14.sp)
+
+                    Spacer(modifier = Modifier.width(48.dp))
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
-                    "Comparar CPUs",
-                    style = MaterialTheme.typography.headlineMedium,
+                    "Compare CPUs lado a lado",
+                    style = MaterialTheme.typography.titleMedium,
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.width(48.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+
+                SearchBox(
+                    searchQuery = searchQuery,
+                    onSearchQueryChanged = { newQuery ->
+                        searchQuery = newQuery
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                SelectionBar(
+                    selectedCount = selectedCpus.size,
+                    viewMode = viewMode,
+                    onViewModeChanged = { viewMode = it },
+                    onClearSelection = {
+                        selectedCpus = emptyList()
+                        searchQuery = ""
+                    },
+                    searchQuery = searchQuery,
+                    filteredCount = filteredCpus.size,
+                    totalCount = cpus.size
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                "Compare CPUs lado a lado",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            SearchBox(
-                searchQuery = searchQuery,
-                onSearchQueryChanged = { newQuery ->
-                    searchQuery = newQuery
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SelectionBar(
-                selectedCount = selectedCpus.size,
-                viewMode = viewMode,
-                onViewModeChanged = { viewMode = it },
-                onClearSelection = {
-                    selectedCpus = emptyList()
-                    searchQuery = ""
-                },
-                searchQuery = searchQuery,
-                filteredCount = filteredCpus.size,
-                totalCount = cpus.size
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Box(modifier = Modifier.weight(1f)) {
+            // Conteúdo scrollável
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
                 when (viewMode) {
                     ViewMode.GRID -> CpuGridView(
                         cpus = filteredCpus,
@@ -181,13 +192,24 @@ fun CpuComparisonScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            CompareButton(
-                enabled = selectedCpus.size == 2,
-                selectedCount = selectedCpus.size,
-                onClick = { showComparison = true }
-            )
+            // Bottom bar fixo com mais espaçamento
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black)
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = 32.dp // Mais espaço inferior
+                    )
+            ) {
+                CompareButton(
+                    enabled = selectedCpus.size == 2,
+                    selectedCount = selectedCpus.size,
+                    onClick = { showComparison = true }
+                )
+            }
         }
     }
 }
@@ -349,7 +371,7 @@ fun CpuGridView(
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 280.dp),
         modifier = modifier,
-        contentPadding = PaddingValues(4.dp),
+        contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -372,7 +394,7 @@ fun CpuListView(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(4.dp),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(cpus) { cpu ->

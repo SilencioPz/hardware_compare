@@ -75,6 +75,7 @@ fun GamePerformanceScreen(
             .fillMaxSize()
             .background(Color.Black)
             .padding(16.dp)
+            .padding(top = 16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

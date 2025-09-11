@@ -74,80 +74,89 @@ fun GpuComparisonScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black)
-                .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black)
+                    .padding(16.dp)
+                    .padding(top = 16.dp)
             ) {
-                Button(
-                    onClick = onBackClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Blue,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.height(48.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Voltar",
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
+                    Button(
+                        onClick = onBackClick,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Blue,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.height(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Voltar",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Voltar", fontSize = 14.sp)
+                    }
+
+                    Text(
+                        "Comparar GPUs",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Voltar", fontSize = 14.sp)
+
+                    Spacer(modifier = Modifier.width(48.dp))
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
-                    "Comparar GPUs",
-                    style = MaterialTheme.typography.headlineMedium,
+                    "Compare GPUs lado a lado",
+                    style = MaterialTheme.typography.titleMedium,
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.width(48.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+
+                SearchBoxGpu(
+                    searchQuery = searchQuery,
+                    onSearchQueryChanged = { newQuery ->
+                        searchQuery = newQuery
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                SelectionBarGpu(
+                    selectedCount = selectedGpus.size,
+                    viewMode = viewMode,
+                    onViewModeChanged = { viewMode = it },
+                    onClearSelection = {
+                        selectedGpus = emptyList()
+                        searchQuery = ""
+                    },
+                    searchQuery = searchQuery,
+                    filteredCount = filteredGpus.size,
+                    totalCount = gpus.size
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                "Compare GPUs lado a lado",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            SearchBoxGpu(
-                searchQuery = searchQuery,
-                onSearchQueryChanged = { newQuery ->
-                    searchQuery = newQuery
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SelectionBarGpu(
-                selectedCount = selectedGpus.size,
-                viewMode = viewMode,
-                onViewModeChanged = { viewMode = it },
-                onClearSelection = {
-                    selectedGpus = emptyList()
-                    searchQuery = ""
-                },
-                searchQuery = searchQuery,
-                filteredCount = filteredGpus.size,
-                totalCount = gpus.size
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Box(modifier = Modifier.weight(1f)) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
                 when (viewMode) {
                     ViewMode.GRID -> GpuGridView(
                         gpus = filteredGpus,
@@ -181,13 +190,23 @@ fun GpuComparisonScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            CompareButtonGpu(
-                enabled = selectedGpus.size == 2,
-                selectedCount = selectedGpus.size,
-                onClick = { showComparison = true }
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black)
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = 32.dp // Mais espaço inferior
+                    )
+            ) {
+                CompareButtonGpu(
+                    enabled = selectedGpus.size == 2,
+                    selectedCount = selectedGpus.size,
+                    onClick = { showComparison = true }
+                )
+            }
         }
     }
 }
