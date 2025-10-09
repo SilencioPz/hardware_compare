@@ -8,7 +8,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Games
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,10 +37,42 @@ fun GamePerformanceScreen(
     var selectedGame by remember { mutableStateOf("") }
     var selectedResolution by remember { mutableStateOf("1920x1080") }
     var showResult by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val cpus = remember { CpuDataSource.loadCpus().map { it.name } }
     val gpus = remember { GpuDataSource.loadGpus().map { it.name } }
-    val games = remember { GameDataSource.loadGames() }
+    val allGames = remember { GameDataSource.loadGames() }
+
+    val filteredGames = remember(allGames, searchQuery) {
+        if (searchQuery.isBlank()) {
+            allGames
+        } else {
+            val query = searchQuery.lowercase()
+            allGames.filter { game ->
+                game.name.contains(query, ignoreCase = true) ||
+                        game.genre.contains(query, ignoreCase = true) ||
+                        game.recommendedCpu.contains(query, ignoreCase = true) ||
+                        game.recommendedGpu.contains(query, ignoreCase = true) ||
+                        (query == "rpg" && game.genre.contains("RPG", ignoreCase = true)) ||
+                        (query == "fps" && game.genre.contains("FPS", ignoreCase = true)) ||
+                        (query == "ação" && game.genre.contains("Ação", ignoreCase = true)) ||
+                        (query == "aventura" && game.genre.contains("Aventura", ignoreCase = true)) ||
+                        (query == "estratégia" && game.genre.contains("Estratégia", ignoreCase = true)) ||
+                        (query == "terror" && (game.genre.contains("Horror", ignoreCase = true) ||
+                                game.genre.contains("Terror", ignoreCase = true))) ||
+                        (query == "clássico" && (game.name.contains("remaster", ignoreCase = true) ||
+                                game.name.contains("classic", ignoreCase = true) ||
+                                game.id in listOf(11, 35, 36, 37, 38, 39))) ||
+                        (query == "remaster" && game.name.contains("remaster", ignoreCase = true)) ||
+                        (query == "definitive" && game.name.contains("definitive", ignoreCase = true)) ||
+                        (query == "edition" && game.name.contains("edition", ignoreCase = true)) ||
+                        (query == "pesado" && game.bottleneckMultiplier > 1.0f) ||
+                        (query == "leve" && game.bottleneckMultiplier < 0.7f) ||
+                        (query == "mundo aberto" && game.genre.contains("mundo aberto", ignoreCase = true))
+            }
+        }
+    }
+
 
     val selectedCpuObj = CpuDataSource.loadCpus().find { it.name == selectedCpu }
     val selectedGpuObj = GpuDataSource.loadGpus().find { it.name == selectedGpu }
@@ -107,7 +141,11 @@ fun GamePerformanceScreen(
                     contentColor = Color.White
                 ),
                 modifier = Modifier.height(48.dp),
-                enabled = selectedCpu.isNotEmpty() || selectedGpu.isNotEmpty() || selectedGame.isNotEmpty() || selectedResolution != "1920x1080"
+                enabled = selectedCpu.isNotEmpty()
+                        || selectedGpu.isNotEmpty()
+                        || selectedGame.isNotEmpty()
+                        || selectedResolution != "1920x1080"
+                        || searchQuery.isNotEmpty()
             ) {
                 Icon(
                     imageVector = Icons.Default.Clear,
@@ -150,6 +188,25 @@ fun GamePerformanceScreen(
             }
 
             item {
+                SearchBox(
+                    searchQuery = searchQuery,
+                    onSearchQueryChanged = { searchQuery = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = "🔍 Buscar jogos por nome, gênero, tipo..."
+                )
+            }
+
+            if (searchQuery.isNotEmpty()) {
+                item {
+                    SearchInfoBar(
+                        searchQuery = searchQuery,
+                        filteredCount = filteredGames.size,
+                        totalCount = allGames.size
+                    )
+                }
+            }
+
+            item {
                 DropdownMenuField(
                     label = "Processador (CPU)",
                     options = cpus,
@@ -168,11 +225,12 @@ fun GamePerformanceScreen(
             }
 
             item {
-                DropdownMenuField(
+                GameDropdownMenuField(
                     label = "Jogo",
-                    options = games.map { it.name },
-                    selectedOption = selectedGame,
-                    onOptionSelected = { selectedGame = it }
+                    games = filteredGames,
+                    selectedGame = selectedGame,
+                    onGameSelected = { selectedGame = it },
+                    searchActive = searchQuery.isNotEmpty()
                 )
             }
 
@@ -199,7 +257,11 @@ fun GamePerformanceScreen(
                         modifier = Modifier
                             .weight(1f)
                             .height(50.dp),
-                        enabled = selectedCpu.isNotEmpty() || selectedGpu.isNotEmpty() || selectedGame.isNotEmpty() || selectedResolution != "1920x1080"
+                        enabled = selectedCpu.isNotEmpty()
+                                || selectedGpu.isNotEmpty()
+                                || selectedGame.isNotEmpty()
+                                || selectedResolution != "1920x1080"
+                                || searchQuery.isNotEmpty()
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
@@ -212,7 +274,8 @@ fun GamePerformanceScreen(
 
                     Button(
                         onClick = { showResult = true },
-                        enabled = selectedCpu.isNotEmpty() && selectedGpu.isNotEmpty() && selectedGame.isNotEmpty(),
+                        enabled = selectedCpu.isNotEmpty() && selectedGpu.isNotEmpty()
+                                && selectedGame.isNotEmpty(),
                         modifier = Modifier
                             .weight(1f)
                             .height(50.dp),
@@ -232,7 +295,8 @@ fun GamePerformanceScreen(
                 }
             }
 
-            if (showResult && completePerformanceData != null && selectedGameObj != null && hardwareAnalysis != null) {
+            if (showResult && completePerformanceData != null
+                && selectedGameObj != null && hardwareAnalysis != null) {
                 item {
                     HardwareAnalysisCard(hardwareAnalysis = hardwareAnalysis)
                 }
@@ -245,6 +309,204 @@ fun GamePerformanceScreen(
                         gpuName = selectedGpu,
                         resolution = selectedResolution
                     )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchBox(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "🔍 Buscar..."
+) {
+    OutlinedTextField(
+        value = searchQuery,
+        onValueChange = onSearchQueryChanged,
+        modifier = modifier,
+        placeholder = {
+            Text(
+                placeholder,
+                color = Color.Gray.copy(alpha = 0.7f)
+            )
+        },
+        leadingIcon = {
+            Icon(
+                Icons.Default.Search,
+                contentDescription = "Buscar",
+                tint = Color.Gray
+            )
+        },
+        trailingIcon = {
+            if (searchQuery.isNotEmpty()) {
+                IconButton(
+                    onClick = { onSearchQueryChanged("") }
+                ) {
+                    Icon(
+                        Icons.Default.Clear,
+                        contentDescription = "Limpar busca",
+                        tint = Color.Gray
+                    )
+                }
+            }
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color(0xFF1A1A1A),
+            unfocusedContainerColor = Color(0xFF1A1A1A),
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            focusedBorderColor = Color.Blue,
+            unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
+            cursorColor = Color.White,
+            focusedPlaceholderColor = Color.Gray.copy(alpha = 0.6f),
+            unfocusedPlaceholderColor = Color.Gray.copy(alpha = 0.4f)
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp)
+    )
+}
+
+@Composable
+fun SearchInfoBar(
+    searchQuery: String,
+    filteredCount: Int,
+    totalCount: Int
+) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = if (filteredCount > 0) Color.Blue.copy(alpha = 0.1f)
+            else Color.Yellow.copy(alpha = 0.1f)
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                if (filteredCount > 0) "✅" else "⚠️",
+                fontSize = 14.sp,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Column {
+                Text(
+                    if (filteredCount > 0) {
+                        "Encontrados $filteredCount de $totalCount jogos"
+                    } else {
+                        "Nenhum jogo encontrado para \"$searchQuery\""
+                    },
+                    color = if (filteredCount > 0) Color.Cyan else Color.Yellow,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                if (filteredCount > 0) {
+                    Text(
+                        "Dica: busque por gênero (RPG, FPS), tipo (clássico, remaster) ou intensidade (leve, pesado)",
+                        color = Color.Gray,
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GameDropdownMenuField(
+    label: String,
+    games: List<Game>,
+    selectedGame: String,
+    onGameSelected: (String) -> Unit,
+    searchActive: Boolean = false
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Text(
+                text = label,
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f)
+            )
+            if (searchActive) {
+                Text(
+                    text = "(${games.size} encontrados)",
+                    color = Color.Cyan,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            TextField(
+                value = selectedGame,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.DarkGray,
+                    focusedContainerColor = Color.DarkGray,
+                    unfocusedTextColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Blue
+                ),
+                placeholder = {
+                    Text(
+                        if (games.isEmpty() && searchActive) "Nenhum jogo encontrado"
+                        else "Selecione um jogo...",
+                        color = Color.Gray
+                    )
+                }
+            )
+
+            if (games.isNotEmpty()) {
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier
+                        .background(Color.Black)
+                        .heightIn(max = 400.dp)
+                ) {
+                    games.forEach { game ->
+                        DropdownMenuItem(
+                            text = {
+                                Column {
+                                    Text(
+                                        game.name,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        game.genre,
+                                        color = Color.Gray,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            },
+                            onClick = {
+                                onGameSelected(game.name)
+                                expanded = false
+                            },
+                            modifier = Modifier.background(Color.Black)
+                        )
+                    }
                 }
             }
         }
