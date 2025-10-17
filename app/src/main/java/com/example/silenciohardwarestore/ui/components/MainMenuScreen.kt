@@ -173,7 +173,7 @@ fun HeaderSection(
             horizontalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.silenciopz_logo),
+                painter = painterResource(id = R.drawable.silenciopz_logo2),
                 contentDescription = "Logo SilencioHardwareStore",
                 modifier = Modifier
                     .size(64.dp)
