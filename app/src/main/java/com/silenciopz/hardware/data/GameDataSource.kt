@@ -1,4 +1,4 @@
-package com.example.silenciohardwarestore.data
+package com.silenciopz.hardware.data
 
 /*
 * Tópicos desta Lista de Jogos:
@@ -29,6 +29,8 @@ object GameDataSource {
             genre = "RPG/FPS",
             recommendedCpu = "Ryzen 5 5600X",
             recommendedGpu = "RTX 3060",
+            minRam = 12,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.2f,
             cpuIntensity = 0.8f, // 0-1 scale
             gpuIntensity = 0.9f
@@ -39,6 +41,8 @@ object GameDataSource {
             genre = "FPS/Battle Royale",
             recommendedCpu = "Ryzen 7 5700X",
             recommendedGpu = "RTX 3070",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.1f,
             cpuIntensity = 0.7f,
             gpuIntensity = 0.85f
@@ -49,6 +53,8 @@ object GameDataSource {
             genre = "Battle Royale",
             recommendedCpu = "Ryzen 5 5600",
             recommendedGpu = "RTX 3060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 0.9f,
             cpuIntensity = 0.6f,
             gpuIntensity = 0.7f
@@ -59,6 +65,8 @@ object GameDataSource {
             genre = "Ação/Aventura",
             recommendedCpu = "Ryzen 5 5600X",
             recommendedGpu = "RTX 3060 Ti",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.3f,
             cpuIntensity = 0.75f,
             gpuIntensity = 0.95f
@@ -69,6 +77,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Ryzen 3 3300X",
             recommendedGpu = "GTX 1650 Super",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.8f,
             cpuIntensity = 0.9f,
             gpuIntensity = 0.4f
@@ -79,6 +89,8 @@ object GameDataSource {
             genre = "Simulador",
             recommendedCpu = "Ryzen 7 5800X3D",
             recommendedGpu = "RTX 4070 Ti",
+            minRam = 16,
+            recommendedRam = 32,
             bottleneckMultiplier = 1.4f,
             cpuIntensity = 0.85f,
             gpuIntensity = 0.9f
@@ -89,6 +101,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Ryzen 5 5600X",
             recommendedGpu = "RTX 3060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.0f,
             cpuIntensity = 0.8f,
             gpuIntensity = 0.7f
@@ -99,6 +113,8 @@ object GameDataSource {
             genre = "RPG/Ação",
             recommendedCpu = "Ryzen 5 5600",
             recommendedGpu = "RTX 4060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.25f,
             cpuIntensity = 0.7f,
             gpuIntensity = 0.88f
@@ -109,6 +125,8 @@ object GameDataSource {
             genre = "Metroidvania",
             recommendedCpu = "Ryzen 5 5500",
             recommendedGpu = "GTX 1660 Super",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.7f,
             cpuIntensity = 0.6f,
             gpuIntensity = 0.5f
@@ -119,6 +137,8 @@ object GameDataSource {
             genre = "ARPG",
             recommendedCpu = "Ryzen 5 5600",
             recommendedGpu = "RTX 3050",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 0.7f,
             cpuIntensity = 0.5f,
             gpuIntensity = 0.6f
@@ -129,6 +149,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Pentium 4",        // Clássico! Qualquer batata roda! XP
             recommendedGpu = "GeForce 4",
+            minRam = 256, // Em MB - 0.25GB
+            recommendedRam = 512, // 0.5GB
             bottleneckMultiplier = 0.3f,
             cpuIntensity = 0.8f,
             gpuIntensity = 0.2f
@@ -139,6 +161,8 @@ object GameDataSource {
             genre = "Puzzles",
             recommendedCpu = "Ryzen 3 3200G",
             recommendedGpu = "GTX 1050",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.6f,
             cpuIntensity = 0.7f,
             gpuIntensity = 0.6f
@@ -149,6 +173,8 @@ object GameDataSource {
             genre = "Cardgame",
             recommendedCpu = "Ryzen 3 4100",
             recommendedGpu = "GTX 1650",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.5f,
             cpuIntensity = 0.4f,
             gpuIntensity = 0.3f
@@ -158,7 +184,9 @@ object GameDataSource {
             name = "The Witcher 3: The Wild Hunt",
             genre = "RPG em mundo aberto",
             recommendedCpu = "Ryzen 5 1600",
-            recommendedGpu = "RTX 2060",  // Com ray tracing
+            recommendedGpu = "RTX 2060", // Com ray tracing
+            minRam = 6,
+            recommendedRam = 8,
             bottleneckMultiplier = 1.4f,  // Pesadão
             cpuIntensity = 0.8f,          // Mundo aberto + NPCs
             gpuIntensity = 0.95f          // Extremamente pesado em GPU
@@ -169,6 +197,8 @@ object GameDataSource {
             genre = "JRPG",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "RTX 3060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.1f,  // Unreal Engine 5
             cpuIntensity = 0.7f,          // JRPG típico
             gpuIntensity = 0.85f          // Gráficos next-gen
@@ -179,6 +209,8 @@ object GameDataSource {
             genre = "Hack and Slash",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "GTX 1660 Super",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 0.8f,
             cpuIntensity = 0.6f,
             gpuIntensity = 0.7f
@@ -189,6 +221,8 @@ object GameDataSource {
             genre = "Ação-Aventura",
             recommendedCpu = "Ryzen 3 3300X",
             recommendedGpu = "GTX 1650",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.7f,
             cpuIntensity = 0.5f,
             gpuIntensity = 0.8f
@@ -199,6 +233,8 @@ object GameDataSource {
             genre = "Ação-Aventura",
             recommendedCpu = "Ryzen 5 5600X",
             recommendedGpu = "RTX 2060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 0.9f,
             cpuIntensity = 0.7f,
             gpuIntensity = 0.9f
@@ -209,6 +245,8 @@ object GameDataSource {
             genre = "Estratégia em Tempo Real",
             recommendedCpu = "Ryzen 3 3200G",  // Com gráfico integrado, mas suporta GPU dedicada leve
             recommendedGpu = "GTX 1050 Ti",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.4f,
             cpuIntensity = 0.8f,
             gpuIntensity = 0.3f
@@ -219,6 +257,8 @@ object GameDataSource {
             genre = "Briga de Rua",
             recommendedCpu = "Ryzen 3 2200G",  // Roda até no integrado Vega
             recommendedGpu = "GT 1030",
+            minRam = 2,
+            recommendedRam = 4,
             bottleneckMultiplier = 0.2f,
             cpuIntensity = 0.3f,
             gpuIntensity = 0.4f
@@ -229,6 +269,8 @@ object GameDataSource {
             genre = "RPG de Ação",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "GTX 1660 Super",
+            minRam = 2,
+            recommendedRam = 4,
             bottleneckMultiplier = 0.7f,
             cpuIntensity = 0.6f,
             gpuIntensity = 0.75f
@@ -239,6 +281,8 @@ object GameDataSource {
             genre = "Furtividade",
             recommendedCpu = "Ryzen 5 5600X",
             recommendedGpu = "RTX 3060 Ti",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.1f,
             cpuIntensity = 0.8f,    // CPU importante para IA e física
             gpuIntensity = 0.85f    // Gráficos detalhados e mundos lotados
@@ -249,6 +293,8 @@ object GameDataSource {
             genre = "Jogo tático por turnos",
             recommendedCpu = "Ryzen 3 3300X",
             recommendedGpu = "GTX 1650",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.5f,
             cpuIntensity = 0.8f,    // Muito dependente de CPU para cálculos de IA
             gpuIntensity = 0.4f
@@ -259,6 +305,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "RTX 2060",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.9f,
             cpuIntensity = 0.65f,
             gpuIntensity = 0.85f    // Engine gráfica pesada
@@ -269,6 +317,8 @@ object GameDataSource {
             genre = "TPS",
             recommendedCpu = "Ryzen 7 5800X",
             recommendedGpu = "RTX 4070",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.2f,
             cpuIntensity = 0.75f,
             gpuIntensity = 0.9f     // Gráficos next-gen
@@ -279,6 +329,8 @@ object GameDataSource {
             genre = "Ação-Aventura em mundo aberto",
             recommendedCpu = "Ryzen 5 5600",
             recommendedGpu = "RTX 3060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.0f,
             cpuIntensity = 0.7f,    // Mundo aberto com muita física e IA
             gpuIntensity = 0.8f     // Gráficos detalhados e mods pesam na GPU
@@ -289,6 +341,8 @@ object GameDataSource {
             genre = "Ação-Aventura em mundo aberto",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "RTX 2060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 0.9f,
             cpuIntensity = 0.6f,    // Jogos mais antigos remasterizados
             gpuIntensity = 0.75f    // Unreal Engine 4 com novos efeitos
@@ -299,6 +353,8 @@ object GameDataSource {
             genre = "Tiroteio de cima pra baixo",
             recommendedCpu = "Ryzen 3 3200G",  // Roda até no integrado
             recommendedGpu = "GT 1030",        // Opcional para maior fluidez
+            minRam = 2,
+            recommendedRam = 4,
             bottleneckMultiplier = 0.3f,
             cpuIntensity = 0.5f,
             gpuIntensity = 0.4f
@@ -309,6 +365,8 @@ object GameDataSource {
             genre = "Ação-Aventura",
             recommendedCpu = "Ryzen 3 3100",
             recommendedGpu = "GTX 1050",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.4f,
             cpuIntensity = 0.6f,    // Muitos personagens e destruição em tempo real
             gpuIntensity = 0.5f     // Estilo pixel art mas com muitos efeitos
@@ -319,6 +377,8 @@ object GameDataSource {
             genre = "Metroidvania",
             recommendedCpu = "Ryzen 3 3200G",  // Roda fácil no integrado
             recommendedGpu = "GTX 1050 Ti",    // Para 4K/60Fps
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.3f,
             cpuIntensity = 0.4f,
             gpuIntensity = 0.6f
@@ -329,6 +389,8 @@ object GameDataSource {
             genre = "Ação-Aventura em mundo aberto",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "GTX 1660 Super",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.8f,
             cpuIntensity = 0.65f,   // Mundo aberto com física de lutas
             gpuIntensity = 0.75f    // Gráficos remasterizados
@@ -339,6 +401,8 @@ object GameDataSource {
             genre = "Furtividade",
             recommendedCpu = "Ryzen 3 3300X",
             recommendedGpu = "GTX 1060",
+            minRam = 6,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.7f,
             cpuIntensity = 0.6f,    // IA dos inimigos
             gpuIntensity = 0.7f     // Estilo cel-shading e sombras
@@ -349,6 +413,8 @@ object GameDataSource {
             genre = "Furtividade",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "RTX 2060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 0.9f,
             cpuIntensity = 0.7f,    // Maior mundo e mais IA
             gpuIntensity = 0.8f     // Gráficos mais avançados
@@ -359,6 +425,8 @@ object GameDataSource {
             genre = "Puzzles",
             recommendedCpu = "Ryzen 3 3200G",
             recommendedGpu = "GT 1030",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.2f,
             cpuIntensity = 0.3f,    // Puzzle leve
             gpuIntensity = 0.4f     // Arte 2D estilizada
@@ -369,6 +437,8 @@ object GameDataSource {
             genre = "Point & Click",
             recommendedCpu = "Ryzen 3 2200G",
             recommendedGpu = "GT 1010",
+            minRam = 2,
+            recommendedRam = 4,
             bottleneckMultiplier = 0.1f,
             cpuIntensity = 0.2f,    // Point & click clássico
             gpuIntensity = 0.3f     // Arte 2D remasterizada
@@ -379,6 +449,8 @@ object GameDataSource {
             genre = "Point & Click",
             recommendedCpu = "Ryzen 3 2200G",  // Roda no integrado
             recommendedGpu = "GT 1010",        // Básico
+            minRam = 2,
+            recommendedRam = 4,
             bottleneckMultiplier = 0.1f,
             cpuIntensity = 0.2f,
             gpuIntensity = 0.3f
@@ -389,6 +461,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Ryzen 3 3100",
             recommendedGpu = "GTX 1050",
+            minRam = 1, // 128MB era o mínimo original
+            recommendedRam = 2, // 256MB
             bottleneckMultiplier = 0.4f,
             cpuIntensity = 0.6f,
             gpuIntensity = 0.4f     // Gráficos antigos
@@ -399,6 +473,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Ryzen 3 3200G",  // Roda até em torradeira
             recommendedGpu = "GT 710",         // Só por formalidade
+            minRam = 1, // 8MB era o mínimo original
+            recommendedRam = 2, // 16MB
             bottleneckMultiplier = 0.1f,
             cpuIntensity = 0.3f,
             gpuIntensity = 0.2f
@@ -409,6 +485,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Ryzen 3 3200G",
             recommendedGpu = "GT 730",
+            minRam = 1, // 16MB era o mínimo
+            recommendedRam = 2, // 32MB
             bottleneckMultiplier = 0.2f,
             cpuIntensity = 0.5f,    // 3D mais avançado que Doom
             gpuIntensity = 0.3f
@@ -419,6 +497,8 @@ object GameDataSource {
             genre = "Survival Horror",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "RTX 2060 Super",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 1.0f,
             cpuIntensity = 0.7f,    // IA avançada do Alien
             gpuIntensity = 0.85f    // Iluminação e atmosfera pesadas
@@ -429,6 +509,8 @@ object GameDataSource {
             genre = "Survival Horror",
             recommendedCpu = "Ryzen 3 3300X",
             recommendedGpu = "GTX 1060",
+            minRam = 1, // 256MB era o mínimo
+            recommendedRam = 2, // 512MB
             bottleneckMultiplier = 0.6f,
             cpuIntensity = 0.5f,
             gpuIntensity = 0.7f
@@ -439,6 +521,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Ryzen 3 3100",
             recommendedGpu = "GTX 1050 Ti",
+            minRam = 2,
+            recommendedRam = 4,
             bottleneckMultiplier = 0.5f,
             cpuIntensity = 0.7f,    // Muitos zumbis na tela
             gpuIntensity = 0.5f
@@ -449,6 +533,8 @@ object GameDataSource {
             genre = "Survival Horror",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "RTX 2060",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 1.0f,
             cpuIntensity = 0.7f,
             gpuIntensity = 0.8f
@@ -459,6 +545,8 @@ object GameDataSource {
             genre = "RPG de Ação",
             recommendedCpu = "Ryzen 5 3600",
             recommendedGpu = "GTX 1660 Super",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.8f,
             cpuIntensity = 0.6f,
             gpuIntensity = 0.75f
@@ -469,6 +557,8 @@ object GameDataSource {
             genre = "Ação em Plataforma",
             recommendedCpu = "Ryzen 3 3200G",   //Gráfico que remete ao Nintendinho, barbada! :D
             recommendedGpu = "GT 1030",
+            minRam = 2,
+            recommendedRam = 4,
             bottleneckMultiplier = 0.2f,
             cpuIntensity = 0.3f,
             gpuIntensity = 0.4f
@@ -479,6 +569,8 @@ object GameDataSource {
             genre = "Briga de Rua",
             recommendedCpu = "Ryzen 3 3200G",
             recommendedGpu = "GTX 1050",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.3f,
             cpuIntensity = 0.4f,
             gpuIntensity = 0.5f
@@ -489,6 +581,8 @@ object GameDataSource {
             genre = "Hack and Slash de Plataforma",
             recommendedCpu = "Ryzen 5 5600X",
             recommendedGpu = "RTX 3060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.1f,
             cpuIntensity = 0.8f,
             gpuIntensity = 0.85f
@@ -499,6 +593,8 @@ object GameDataSource {
             genre = "Roguelike-Metroidvania",
             recommendedCpu = "Ryzen 3 3300X",
             recommendedGpu = "GTX 1060",
+            minRam = 4,
+            recommendedRam = 8,
             bottleneckMultiplier = 0.5f,
             cpuIntensity = 0.6f,
             gpuIntensity = 0.5f
@@ -509,6 +605,8 @@ object GameDataSource {
             genre = "RPG",
             recommendedCpu = "Ryzen 5 5600X",
             recommendedGpu = "RTX 4060",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.2f,
             cpuIntensity = 0.7f,
             gpuIntensity = 0.9f
@@ -519,6 +617,8 @@ object GameDataSource {
             genre = "FPS",
             recommendedCpu = "Ryzen 5 5600X",
             recommendedGpu = "RTX 3070",
+            minRam = 8,
+            recommendedRam = 16,
             bottleneckMultiplier = 1.1f,
             cpuIntensity = 0.75f,
             gpuIntensity = 0.9f

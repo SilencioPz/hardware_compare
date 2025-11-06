@@ -1,4 +1,4 @@
-package com.example.silenciohardwarestore.data
+package com.silenciopz.hardware.data
 
 object GpuDataSource {
     fun loadGpus(): List<Gpu> = listOf(

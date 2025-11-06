@@ -1,10 +1,10 @@
-package com.example.silenciohardwarestore.utils
+package com.silenciopz.hardware.utils
 
-import com.example.silenciohardwarestore.data.Cpu
-import com.example.silenciohardwarestore.data.CpuDataSource
-import com.example.silenciohardwarestore.data.Gpu
-import com.example.silenciohardwarestore.data.Game
-import com.example.silenciohardwarestore.data.GpuDataSource
+import com.silenciopz.hardware.data.Cpu
+import com.silenciopz.hardware.data.CpuDataSource
+import com.silenciopz.hardware.data.Gpu
+import com.silenciopz.hardware.data.Game
+import com.silenciopz.hardware.data.GpuDataSource
 import kotlin.math.abs
 
 class BenchmarkGames {
@@ -245,33 +245,8 @@ class BenchmarkGames {
 
     private fun estimateFps(cpu: Cpu, gpu: Gpu, game: Game, resolution: String): Pair<Int, Int> {
 
-        if (isOverkillForGame(cpu, gpu, game)) {
-            val baseFps = when (resolution) {
-                "1024x768" -> 500
-                "1920x1080" -> 300
-                "2560x1440" -> 200
-                "3840x2160" -> 120
-                else -> 300
-            }
-            return Pair((baseFps * 0.9).toInt(), (baseFps * 1.1).toInt())
-        }
+        return Pair(200, 200)
 
-        val cpuScore = calculateCpuGamingScore(cpu)
-        val gpuScore = calculateGpuGamingScore(gpu)
-
-        val baseFps = when {
-            game.bottleneckMultiplier < 0.5f -> (cpuScore + gpuScore) / 20 // Jogos leves
-            game.bottleneckMultiplier < 1.0f -> (cpuScore + gpuScore) / 30 // Jogos médios
-            else -> (cpuScore + gpuScore) / 40 // Jogos pesados
-        }
-
-        val resolutionFactor = getResolutionFpsFactor(resolution)
-        val gameFactor = 1.5f / game.bottleneckMultiplier.coerceAtLeast(0.5f)
-
-        val minFps = (baseFps * 0.7 * resolutionFactor * gameFactor).toInt().coerceIn(30, 1000)
-        val maxFps = (baseFps * 1.3 * resolutionFactor * gameFactor).toInt().coerceIn(60, 1000)
-
-        return Pair(minFps, maxFps)
     }
 
     private fun getResolutionMultiplier(resolution: String): Float {
@@ -280,16 +255,6 @@ class BenchmarkGames {
             "1920x1080" -> 1.0f
             "2560x1440" -> 2.0f
             "3840x2160" -> 3.0f  // Favorece GPU
-            else -> 1.0f
-        }
-    }
-
-    private fun getResolutionFpsFactor(resolution: String): Float {
-        return when (resolution) {
-            "1024x768" -> 2.0f
-            "1920x1080" -> 1.0f
-            "2560x1440" -> 0.65f
-            "3840x2160" -> 0.35f
             else -> 1.0f
         }
     }
@@ -425,10 +390,10 @@ class BenchmarkGames {
     private fun compareFpsValues(fps1: Int, fps2: Int): String {
         val avgFps = (fps1 + fps2) / 2
         return when {
-            avgFps > 144 -> "🎯 Competitivo"
-            avgFps > 90 -> "🚀 Fluido"
-            avgFps > 60 -> "✅ Jogável"
-            avgFps > 30 -> "⚠️ Limitado"
+            avgFps >= 200 -> "🎯 Competitivo (200 FPS)"
+            avgFps > 144 -> "🚀 Muito Fluido"
+            avgFps > 90 -> "✅ Fluido"
+            avgFps > 60 -> "⚠️ Limitado"
             else -> "❌ Inviável"
         }
     }

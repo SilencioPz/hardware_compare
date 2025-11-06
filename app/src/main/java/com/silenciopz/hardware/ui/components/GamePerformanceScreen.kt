@@ -1,4 +1,4 @@
-package com.example.silenciohardwarestore.ui.components
+package com.silenciopz.hardware.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,14 +19,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.silenciohardwarestore.data.GameDataSource
-import com.example.silenciohardwarestore.data.CpuDataSource
-import com.example.silenciohardwarestore.data.GpuDataSource
-import com.example.silenciohardwarestore.data.Cpu
-import com.example.silenciohardwarestore.data.Gpu
-import com.example.silenciohardwarestore.data.Game
-import com.example.silenciohardwarestore.utils.BenchmarkGames
-import kotlin.math.abs
+import com.silenciopz.hardware.data.GameDataSource
+import com.silenciopz.hardware.data.CpuDataSource
+import com.silenciopz.hardware.data.GpuDataSource
+import com.silenciopz.hardware.data.Cpu
+import com.silenciopz.hardware.data.Gpu
+import com.silenciopz.hardware.data.Game
+import com.silenciopz.hardware.utils.BenchmarkGames
 
 @Composable
 fun GamePerformanceScreen(
@@ -897,6 +896,10 @@ fun CompleteGamePerformanceResultCard(
     resolution: String
 ) {
 
+    val selectedGameObj = remember(gameName) {
+        GameDataSource.loadGames().find { it.name == gameName }
+    }
+
     val isOverkill = performanceData["⚡ Bottleneck"]?.getOrNull(1) == "0.0%" &&
             performanceData["⚡ Bottleneck"]?.getOrNull(2) == "Hardware Overkill"
 
@@ -976,6 +979,19 @@ fun CompleteGamePerformanceResultCard(
             items = performanceData.filterKeys {
                 it.contains("Desempenho no Jogo") || it.contains("Resolução Ideal")
             }
+        )
+
+        PerformanceCategoryCard(
+            title = "💾 RAM Recomendada",
+            items = mapOf(
+                "Requisitos de Memória" to listOf(
+                    "RAM do Sistema",
+                    "${selectedGameObj!!.minRam}GB mínimos",
+                    "${selectedGameObj!!.recommendedRam}GB recomendados",
+                    if (userHasEnoughRam(selectedGameObj!!.recommendedRam)) "✅ Suficiente" else
+                        "⚠️ Considere upgrade"
+                )
+            )
         )
 
         PerformanceCategoryCard(
@@ -1106,4 +1122,10 @@ fun Game.getMinGpuScore(): Int {
 
 fun Game.getRecGpuScore(): Int {
     return (15000 * bottleneckMultiplier).toInt()
+}
+
+private fun userHasEnoughRam(recommendedRam: Int): Boolean {
+    // Por enquanto vamos assumir que o usuário tem RAM suficiente
+    // Em uma versão futura, podemos pedir que o usuário informe sua RAM
+    return true
 }

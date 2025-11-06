@@ -1,4 +1,4 @@
-package com.example.silenciohardwarestore.ui.components
+package com.silenciopz.hardware.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,28 +21,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.silenciohardwarestore.data.Gpu
-import com.example.silenciohardwarestore.data.GpuDataSource
+import com.silenciopz.hardware.data.Cpu
+import com.silenciopz.hardware.data.CpuDataSource
+import com.silenciopz.hardware.utils.BenchmarkUtils
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import com.example.silenciohardwarestore.utils.BenchmarkGpus
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import kotlin.collections.plus
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.lazy.items
 
 @Composable
-fun GpuComparisonScreen(
+fun CpuComparisonScreen(
     onBackClick: () -> Unit = {}
 ) {
-    val gpus = remember { GpuDataSource.loadGpus().filter { it.name.isNotEmpty() } }
-    var selectedGpus by remember { mutableStateOf<List<Gpu>>(emptyList()) }
-    val benchmarkGpus = remember { BenchmarkGpus() }
+    val cpus = remember { CpuDataSource.loadCpus().filter { it.name.isNotEmpty() } }
+    var selectedCpus by remember { mutableStateOf<List<Cpu>>(emptyList()) }
+    val benchmarkUtils = remember { BenchmarkUtils() }
     var showComparison by remember { mutableStateOf(false) }
     var viewMode by remember { mutableStateOf(ViewMode.GRID) }
     var searchQuery by remember { mutableStateOf("") }
@@ -50,27 +48,28 @@ fun GpuComparisonScreen(
     val isLandscape = configuration.screenWidthDp > configuration.screenHeightDp
     val density = LocalDensity.current
 
-    val filteredGpus = remember(gpus, searchQuery) {
+    val filteredCpus = remember(cpus, searchQuery) {
         if (searchQuery.isBlank()) {
-            gpus
+            cpus
         } else {
-            gpus.filter { gpu ->
-                gpu.name.contains(searchQuery, ignoreCase = true) ||
-                        gpu.brand.contains(searchQuery, ignoreCase = true) ||
-                        gpu.memory.toString().contains(searchQuery) ||
-                        gpu.tdp.toString().contains(searchQuery)
+            cpus.filter { cpu ->
+                cpu.name.contains(searchQuery, ignoreCase = true) ||
+                        cpu.brand.contains(searchQuery, ignoreCase = true) ||
+                        cpu.socket.contains(searchQuery, ignoreCase = true) ||
+                        cpu.cores.toString().contains(searchQuery) ||
+                        cpu.tdp.toString().contains(searchQuery)
             }
         }
     }
 
-    if (showComparison && selectedGpus.size == 2) {
-        ComparisonFullScreen1(
-            gpu1 = selectedGpus[0],
-            gpu2 = selectedGpus[1],
-            benchmarkGpus = benchmarkGpus,
+    if (showComparison && selectedCpus.size == 2) {
+        ComparisonFullScreen(
+            cpu1 = selectedCpus[0],
+            cpu2 = selectedCpus[1],
+            benchmarkUtils = benchmarkUtils,
             onBackClick = {
                 showComparison = false
-                selectedGpus = emptyList()
+                selectedCpus = emptyList()
                 searchQuery = ""
             }
         )
@@ -80,7 +79,6 @@ fun GpuComparisonScreen(
                 .fillMaxSize()
                 .background(Color.Black)
         ) {
-            //Header responsivo
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,13 +111,13 @@ fun GpuComparisonScreen(
                         }
                     }
 
-                    //Título responsivo
                     Text(
-                        "Comparar GPUs",
+                        "Comparar CPUs",
                         style = MaterialTheme.typography.headlineMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        fontSize = if (isLandscape) 18.sp else MaterialTheme.typography.headlineMedium.fontSize,
+                        fontSize = if (isLandscape) 18.sp else MaterialTheme
+                            .typography.headlineMedium.fontSize,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f, fill = false)
@@ -132,7 +130,7 @@ fun GpuComparisonScreen(
 
                 if (!isLandscape) {
                     Text(
-                        "Compare GPUs lado a lado",
+                        "Compare CPUs lado a lado",
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Medium,
@@ -145,7 +143,7 @@ fun GpuComparisonScreen(
                     Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 24.dp))
                 }
 
-                SearchBoxGpu(
+                SearchBox(
                     searchQuery = searchQuery,
                     onSearchQueryChanged = { newQuery ->
                         searchQuery = newQuery
@@ -155,17 +153,17 @@ fun GpuComparisonScreen(
 
                 Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 16.dp))
 
-                SelectionBarGpu(
-                    selectedCount = selectedGpus.size,
+                SelectionBar(
+                    selectedCount = selectedCpus.size,
                     viewMode = viewMode,
                     onViewModeChanged = { viewMode = it },
                     onClearSelection = {
-                        selectedGpus = emptyList()
+                        selectedCpus = emptyList()
                         searchQuery = ""
                     },
                     searchQuery = searchQuery,
-                    filteredCount = filteredGpus.size,
-                    totalCount = gpus.size,
+                    filteredCount = filteredCpus.size,
+                    totalCount = cpus.size,
                     isLandscape = isLandscape
                 )
             }
@@ -176,32 +174,32 @@ fun GpuComparisonScreen(
                     .fillMaxWidth()
             ) {
                 when (viewMode) {
-                    ViewMode.GRID -> GpuGridView(
-                        gpus = filteredGpus,
-                        selectedGpus = selectedGpus,
-                        onGpuSelected = { gpu, isSelected ->
-                            selectedGpus = if (isSelected) {
-                                if (selectedGpus.size < 2) {
-                                    selectedGpus + gpu
+                    ViewMode.GRID -> CpuGridView(
+                        cpus = filteredCpus,
+                        selectedCpus = selectedCpus,
+                        onCpuSelected = { cpu, isSelected ->
+                            selectedCpus = if (isSelected) {
+                                if (selectedCpus.size < 2) {
+                                    selectedCpus + cpu
                                 } else {
-                                    selectedGpus
+                                    selectedCpus
                                 }
                             } else {
-                                selectedGpus - gpu
+                                selectedCpus - cpu
                             }
                         },
                         modifier = Modifier.fillMaxSize(),
                         isLandscape = isLandscape
                     )
 
-                    ViewMode.LIST -> GpuListView(
-                        gpus = filteredGpus,
-                        selectedGpus = selectedGpus,
-                        onGpuSelected = { gpu, isSelected ->
-                            selectedGpus = if (isSelected) {
-                                if (selectedGpus.size < 2) selectedGpus + gpu else selectedGpus
+                    ViewMode.LIST -> CpuListView(
+                        cpus = filteredCpus,
+                        selectedCpus = selectedCpus,
+                        onCpuSelected = { cpu, isSelected ->
+                            selectedCpus = if (isSelected) {
+                                if (selectedCpus.size < 2) selectedCpus + cpu else selectedCpus
                             } else {
-                                selectedGpus - gpu
+                                selectedCpus - cpu
                             }
                         },
                         modifier = Modifier.fillMaxSize()
@@ -217,12 +215,12 @@ fun GpuComparisonScreen(
                         start = if (isLandscape) 8.dp else 16.dp,
                         end = if (isLandscape) 8.dp else 16.dp,
                         top = if (isLandscape) 8.dp else 16.dp,
-                        bottom = if (isLandscape) 16.dp else 32.dp
+                        bottom = if (isLandscape) 24.dp else 48.dp
                     )
             ) {
-                CompareButtonGpu(
-                    enabled = selectedGpus.size == 2,
-                    selectedCount = selectedGpus.size,
+                CompareButton(
+                    enabled = selectedCpus.size == 2,
+                    selectedCount = selectedCpus.size,
                     onClick = { showComparison = true },
                     isLandscape = isLandscape
                 )
@@ -232,7 +230,7 @@ fun GpuComparisonScreen(
 }
 
 @Composable
-fun SearchBoxGpu(
+fun SearchBox(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -243,7 +241,7 @@ fun SearchBoxGpu(
         modifier = modifier,
         placeholder = {
             Text(
-                "🔍 Buscar por nome da placa de vídeo...",
+                "🔍 Buscar por nome do processador...",
                 color = Color.Gray.copy(alpha = 0.7f)
             )
         },
@@ -284,7 +282,7 @@ fun SearchBoxGpu(
 }
 
 @Composable
-fun SelectionBarGpu(
+fun SelectionBar(
     selectedCount: Int,
     viewMode: ViewMode,
     onViewModeChanged: (ViewMode) -> Unit,
@@ -292,8 +290,9 @@ fun SelectionBarGpu(
     searchQuery: String = "",
     filteredCount: Int = 0,
     totalCount: Int = 0,
-    componentType: String = "GPU",
-    isLandscape: Boolean = false
+    isLandscape: Boolean = false,
+    brandFilter: String? = null,
+    onBrandFilterChanged: (String?) -> Unit = {}
 ) {
     Column {
         Row(
@@ -323,7 +322,7 @@ fun SelectionBarGpu(
 
                 if (searchQuery.isNotEmpty()) {
                     Text(
-                        "📊 Encontradas: $filteredCount de $totalCount ${componentType}s",
+                        "📊 Encontradas: $filteredCount de $totalCount CPUs",
                         color = if (filteredCount > 0) Color.Cyan else Color.Yellow,
                         fontSize = if (isLandscape) 10.sp else 12.sp,
                         modifier = Modifier.padding(top = 2.dp)
@@ -358,6 +357,66 @@ fun SelectionBarGpu(
                     )
                 )
             }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Filtrar:",
+                    color = Color.White,
+                    fontSize = if (isLandscape) 12.sp else 14.sp,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+
+                FilterChip(
+                    onClick = { onBrandFilterChanged(null) },
+                    label = { Text("Todas", fontSize = if (isLandscape) 10.sp else 12.sp) },
+                    selected = brandFilter == null,
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Color.Blue,
+                        selectedLabelColor = Color.White
+                    )
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                // Chip para AMD
+                FilterChip(
+                    onClick = { onBrandFilterChanged("AMD") },
+                    label = {
+                        Text(
+                            "🔴 AMD",
+                            fontSize = if (isLandscape) 10.sp else 12.sp
+                        )
+                    },
+                    selected = brandFilter == "AMD",
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Color.Red.copy(alpha = 0.3f),
+                        selectedLabelColor = Color.Red
+                    )
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                FilterChip(
+                    onClick = { onBrandFilterChanged("Intel") },
+                    label = {
+                        Text(
+                            "🔵 Intel",
+                            fontSize = if (isLandscape) 10.sp else 12.sp
+                        )
+                    },
+                    selected = brandFilter == "Intel",
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Color.Blue.copy(alpha = 0.3f),
+                        selectedLabelColor = Color.Blue
+                    )
+                )
+            }
         }
 
         if (searchQuery.isNotEmpty() && filteredCount == 0) {
@@ -375,7 +434,7 @@ fun SelectionBarGpu(
                     Text("⚠️", fontSize = 14.sp)
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        "Nenhuma $componentType encontrada para \"$searchQuery\"",
+                        "Nenhuma CPU encontrada para \"$searchQuery\"",
                         color = Color.Yellow,
                         fontSize = if (isLandscape) 10.sp else 12.sp
                     )
@@ -386,10 +445,10 @@ fun SelectionBarGpu(
 }
 
 @Composable
-fun GpuGridView(
-    gpus: List<Gpu>,
-    selectedGpus: List<Gpu>,
-    onGpuSelected: (Gpu, Boolean) -> Unit,
+fun CpuGridView(
+    cpus: List<Cpu>,
+    selectedCpus: List<Cpu>,
+    onCpuSelected: (Cpu, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isLandscape: Boolean = false
 ) {
@@ -403,11 +462,13 @@ fun GpuGridView(
         horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 4.dp else 8.dp),
         verticalArrangement = Arrangement.spacedBy(if (isLandscape) 4.dp else 8.dp)
     ) {
-        items(gpus) { gpu ->
-            GpuGridCard(
-                gpu = gpu,
-                isSelected = selectedGpus.contains(gpu),
-                onSelected = { onGpuSelected(gpu, it) },
+        items(cpus.size) { index ->
+            CpuGridCard(
+                cpu = cpus[index],
+                isSelected = selectedCpus.contains(cpus[index]),
+                onSelected = { isSelected ->
+                    onCpuSelected(cpus[index], isSelected)
+                },
                 isLandscape = isLandscape
             )
         }
@@ -415,30 +476,30 @@ fun GpuGridView(
 }
 
 @Composable
-fun GpuListView(
-    gpus: List<Gpu>,
-    selectedGpus: List<Gpu>,
-    onGpuSelected: (Gpu, Boolean) -> Unit,
+fun CpuListView(
+    cpus: List<Cpu>,
+    selectedCpus: List<Cpu>,
+    onCpuSelected: (Cpu, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(4.dp),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(gpus) { gpu ->
-            GpuListCard(
-                gpu = gpu,
-                isSelected = selectedGpus.contains(gpu),
-                onSelected = { onGpuSelected(gpu, it) }
+        items(cpus) { cpu ->
+            CpuListCard(
+                cpu = cpu,
+                isSelected = selectedCpus.contains(cpu),
+                onSelected = { onCpuSelected(cpu, it) }
             )
         }
     }
 }
 
 @Composable
-fun GpuGridCard(
-    gpu: Gpu,
+fun CpuGridCard(
+    cpu: Cpu,
     isSelected: Boolean,
     onSelected: (Boolean) -> Unit,
     isLandscape: Boolean = false
@@ -475,7 +536,7 @@ fun GpuGridCard(
                 verticalAlignment = Alignment.Top
             ) {
                 Text(
-                    gpu.name,
+                    cpu.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -498,13 +559,13 @@ fun GpuGridCard(
             Spacer(modifier = Modifier.height(if (isLandscape) 4.dp else 6.dp))
 
             Surface(
-                color = if (gpu.brand == "AMD") Color.Red.copy(alpha = 0.2f) else Color.Green.copy(alpha = 0.2f),
+                color = if (cpu.brand == "AMD") Color.Red.copy(alpha = 0.2f) else Color.Blue.copy(alpha = 0.2f),
                 shape = RoundedCornerShape(4.dp),
                 modifier = Modifier.wrapContentWidth()
             ) {
                 Text(
-                    gpu.brand,
-                    color = if (gpu.brand == "AMD") Color.Red else Color.Green,
+                    cpu.brand,
+                    color = if (cpu.brand == "AMD") Color.Red else Color.Blue,
                     fontSize = if (isLandscape) 10.sp else 12.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
@@ -513,18 +574,18 @@ fun GpuGridCard(
 
             Spacer(modifier = Modifier.height(if (isLandscape) 6.dp else 8.dp))
 
-            GpuSpecRow("💾", "VRAM", "${gpu.memory} GB", isLandscape)
-            GpuSpecRow("⚡", "Base", "${gpu.baseClock} MHz", isLandscape)
-            GpuSpecRow("🚀", "Boost", "${gpu.turboClock} MHz", isLandscape)
-            GpuSpecRow("💡", "TDP", "${gpu.tdp}W", isLandscape)
-            GpuSpecRow("🌡️", "Temp", "${gpu.baseTemperature}°C", isLandscape)
+            CpuSpecRow("⚡", "Base", "${cpu.baseClock} GHz", isLandscape)
+            CpuSpecRow("🚀", "Turbo", "${cpu.turboClock} GHz", isLandscape)
+            CpuSpecRow("🔧", "Núcleos", "${cpu.cores}C/${cpu.threads}T", isLandscape)
+            CpuSpecRow("💡", "TDP", "${cpu.tdp}W", isLandscape)
+            CpuSpecRow("🌡️", "Temp", "${cpu.baseTemperature}°C", isLandscape)
         }
     }
 }
 
 @Composable
-fun GpuListCard(
-    gpu: Gpu,
+fun CpuListCard(
+    cpu: Cpu,
     isSelected: Boolean,
     onSelected: (Boolean) -> Unit
 ) {
@@ -553,18 +614,21 @@ fun GpuListCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    gpu.name,
+                    cpu.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
+
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
-                    "${gpu.brand} • ${gpu.memory}GB • ${gpu.turboClock}MHz • ${gpu.tdp}W",
+                    "${cpu.brand} • ${cpu.cores}C/${cpu.threads}T • ${cpu.turboClock}GHz • ${cpu.tdp}W",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
             }
+
             if (isSelected) {
                 Icon(
                     Icons.Default.Check,
@@ -578,7 +642,7 @@ fun GpuListCard(
 }
 
 @Composable
-fun GpuSpecRow(emoji: String, label: String, value: String, isLandscape: Boolean = false) {
+fun CpuSpecRow(emoji: String, label: String, value: String, isLandscape: Boolean = false) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -608,11 +672,10 @@ fun GpuSpecRow(emoji: String, label: String, value: String, isLandscape: Boolean
 }
 
 @Composable
-fun CompareButtonGpu(
+fun CompareButton(
     enabled: Boolean,
     selectedCount: Int,
     onClick: () -> Unit,
-    componentType: String = "GPU",
     isLandscape: Boolean = false
 ) {
     Button(
@@ -636,7 +699,7 @@ fun CompareButtonGpu(
         Spacer(modifier = Modifier.width(4.dp))
 
         Text(
-            if (selectedCount == 2) "🔥 Comparar ${componentType}s!" else "Selecione 2 ${componentType}s ($selectedCount/2)",
+            if (selectedCount == 2) "🔥 Comparar CPUs!" else "Selecione 2 CPUs ($selectedCount/2)",
             fontWeight = FontWeight.Bold,
             fontSize = if (isLandscape) 12.sp else 14.sp,
             maxLines = 1,
@@ -646,13 +709,14 @@ fun CompareButtonGpu(
 }
 
 @Composable
-fun ComparisonFullScreen1(
-    gpu1: Gpu,
-    gpu2: Gpu,
-    benchmarkGpus: BenchmarkGpus,
+fun ComparisonFullScreen(
+    cpu1: Cpu,
+    cpu2: Cpu,
+    benchmarkUtils: BenchmarkUtils,
     onBackClick: () -> Unit
 ) {
-    val result = benchmarkGpus.compareGpus(gpu1, gpu2)
+    val result = benchmarkUtils.compareCpus(cpu1, cpu2)
+    val winner = determineWinner(cpu1, cpu2, result)
 
     Column(
         modifier = Modifier
@@ -700,28 +764,145 @@ fun ComparisonFullScreen1(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    GpuInfoCard(gpu = gpu1)
+                    CpuInfoCard(cpu = cpu1)
                     Spacer(modifier = Modifier.height(24.dp))
-                    GpuInfoCard(gpu = gpu2)
+                    CpuInfoCard(cpu = cpu2)
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                ComparisonTableView1(
-                    gpu1Name = gpu1.name,
-                    gpu2Name = gpu2.name,
+                ComparisonTableView(
+                    cpu1Name = cpu1.name,
+                    cpu2Name = cpu2.name,
                     result = result
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                WinnerCard(winner = winner)
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
 }
 
+private fun determineWinner(cpu1: Cpu, cpu2: Cpu, result: Map<String, List<String>>): Winner {
+    var cpu1Score = 0
+    var cpu2Score = 0
+
+    result.forEach { (category, values) ->
+        val diff = values[3]
+        when {
+            diff.startsWith("+") -> cpu1Score++ // CPU1 ganhou
+            diff.startsWith("-") -> cpu2Score++ // CPU2 ganhou
+        }
+    }
+
+    return when {
+        cpu1Score > cpu2Score -> Winner(
+            winner = cpu1,
+            loser = cpu2,
+            score = "$cpu1Score x $cpu2Score",
+            advantage = getMainAdvantage(cpu1, cpu2, result)
+        )
+        cpu2Score > cpu1Score -> Winner(
+            winner = cpu2,
+            loser = cpu1,
+            score = "$cpu2Score x $cpu1Score",
+            advantage = getMainAdvantage(cpu2, cpu1, result)
+        )
+        else -> Winner(
+            winner = null, // Empate
+            loser = null,
+            score = "EMPATE",
+            advantage = "Performance equivalente"
+        )
+    }
+}
+
+private fun getMainAdvantage(winner: Cpu, loser: Cpu, result: Map<String, List<String>>): String {
+    var advantages = mutableListOf<String>()
+
+    result.forEach { (category, values) ->
+        val diff = values[3]
+        if (diff.startsWith("+")) {
+            when (category) {
+                "Performance" -> advantages.add("Performance Geral")
+                "Single-Core" -> advantages.add("Single-Core")
+                "Multi-Core" -> advantages.add("Multi-Core")
+                "Gaming" -> advantages.add("Desempenho em Jogos")
+                "Eficiência" -> advantages.add("Eficiência Energética")
+                "🌡️ Temp. Gaming/Trabalho Pesado" -> advantages.add("Temperatura Mais Baixa")
+                "⚠️ Risco Overclock" -> advantages.add("Melhor Overclock")
+                "🔥 Estabilidade Térmica" -> advantages.add("Estabilidade Térmica")
+            }
+        }
+    }
+
+    return when {
+        advantages.contains("Desempenho em Jogos") -> "Melhor para Gaming"
+        advantages.contains("Performance Geral") -> "Performance Superior"
+        advantages.contains("Single-Core") -> "Single-Core Mais Rápido"
+        advantages.contains("Multi-Core") -> "Multi-Core Mais Poderoso"
+        advantages.contains("Temperatura Mais Baixa") -> "Mais Frio e Eficiente"
+        advantages.isNotEmpty() -> "Vantagem em ${advantages.first()}"
+        else -> "Excelente Performance"
+    }
+}
+
 @Composable
-fun ComparisonTableView1(
-    gpu1Name: String,
-    gpu2Name: String,
+fun WinnerCard(winner: Winner) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = if (winner.winner == null) Color.Yellow.copy(alpha = 0.2f)
+            else Color.Green.copy(alpha = 0.2f)
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (winner.winner == null) {
+                Text(
+                    "⚖️ EMPATE TÉCNICO",
+                    color = Color.Yellow,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    "As duas CPUs têm performance muito similar",
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                Text(
+                    "🏆 VENCEDOR: ${winner.winner.name}",
+                    color = Color.Green,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    "Placar: ${winner.score} • ${winner.advantage}",
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+data class Winner(
+    val winner: Cpu?, // null = empate
+    val loser: Cpu?,
+    val score: String,
+    val advantage: String
+)
+
+@Composable
+fun ComparisonTableView(
+    cpu1Name: String,
+    cpu2Name: String,
     result: Map<String, List<String>>,
     isLandscape: Boolean = false
 ) {
@@ -751,14 +932,14 @@ fun ComparisonTableView1(
                     fontSize = if (isLandscape) 12.sp else 14.sp
                 )
                 Text(
-                    gpu1Name.take(if (isLandscape) 12 else 15) + if (gpu1Name.length > (if (isLandscape) 12 else 15)) "..." else "",
+                    cpu1Name.take(if (isLandscape) 12 else 15) + if (cpu1Name.length > (if (isLandscape) 12 else 15)) "..." else "",
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = Modifier.weight(1.5f),
                     fontSize = if (isLandscape) 11.sp else 12.sp
                 )
                 Text(
-                    gpu2Name.take(if (isLandscape) 12 else 15) + if (gpu2Name.length > (if (isLandscape) 12 else 15)) "..." else "",
+                    cpu2Name.take(if (isLandscape) 12 else 15) + if (cpu2Name.length > (if (isLandscape) 12 else 15)) "..." else "",
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = Modifier.weight(1.5f),
@@ -840,7 +1021,7 @@ fun ComparisonTableView1(
 }
 
 @Composable
-fun GpuInfoCard(gpu: Gpu, modifier: Modifier = Modifier) {
+fun CpuInfoCard(cpu: Cpu, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(4.dp),
@@ -853,18 +1034,21 @@ fun GpuInfoCard(gpu: Gpu, modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                gpu.name,
+                cpu.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("${gpu.memory} GB VRAM", color = Color.Gray)
-            Text("Base: ${gpu.baseClock} MHz", color = Color.Gray)
-            Text("Boost: ${gpu.turboClock} MHz", color = Color.Gray)
-            Text("TDP: ${gpu.tdp}W", color = Color.Gray)
-            Text("🌡️: ${gpu.baseTemperature}°C", color = Color.Gray)
+            Text("${cpu.cores} cores / ${cpu.threads} threads", color = Color.Gray)
+            Text("Base: ${cpu.baseClock} GHz", color = Color.Gray)
+            Text("Turbo: ${cpu.turboClock} GHz", color = Color.Gray)
+            Text("TDP: ${cpu.tdp}W", color = Color.Gray)
         }
     }
+}
+
+enum class ViewMode {
+    GRID, LIST
 }

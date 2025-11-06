@@ -1,6 +1,6 @@
-package com.example.silenciohardwarestore.utils
+package com.silenciopz.hardware.utils
 
-import com.example.silenciohardwarestore.data.Gpu
+import com.silenciopz.hardware.data.Gpu
 
 class BenchmarkGpus {
 

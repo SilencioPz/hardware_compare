@@ -1,4 +1,4 @@
-package com.example.silenciohardwarestore
+package com.silenciopz.hardware
 
 import org.junit.Test
 

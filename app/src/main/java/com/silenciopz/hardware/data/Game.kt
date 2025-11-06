@@ -1,4 +1,4 @@
-package com.example.silenciohardwarestore.data
+package com.silenciopz.hardware.data
 
 data class Game(
     val id: Int,
@@ -6,6 +6,8 @@ data class Game(
     val genre: String,
     val recommendedCpu: String,
     val recommendedGpu: String,
+    val minRam: Int = 8,
+    val recommendedRam: Int = 16,
     val bottleneckMultiplier: Float = 1.0f,
     val cpuIntensity: Float = 0.7f, // 0-1 scale (CPU dependency)
     val gpuIntensity: Float = 0.7f,  // 0-1 scale (GPU dependency)

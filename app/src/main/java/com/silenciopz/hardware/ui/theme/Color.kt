@@ -1,4 +1,4 @@
-package com.example.silenciohardwarestore.ui.theme
+package com.silenciopz.hardware.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

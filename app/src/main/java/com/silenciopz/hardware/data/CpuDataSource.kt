@@ -1,4 +1,4 @@
-package com.example.silenciohardwarestore.data
+package com.silenciopz.hardware.data
 
 object CpuDataSource {
     fun loadCpus(): List<Cpu> = listOf(
