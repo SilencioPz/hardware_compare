@@ -113,7 +113,6 @@ fun GpuComparisonScreen(
                         }
                     }
 
-                    //Título responsivo
                     Text(
                         "Comparar GPUs",
                         style = MaterialTheme.typography.headlineMedium,
@@ -217,7 +216,7 @@ fun GpuComparisonScreen(
                         start = if (isLandscape) 8.dp else 16.dp,
                         end = if (isLandscape) 8.dp else 16.dp,
                         top = if (isLandscape) 8.dp else 16.dp,
-                        bottom = if (isLandscape) 24.dp else 48.dp
+                        bottom = if (isLandscape) 32.dp else 64.dp
                     )
             ) {
                 CompareButtonGpu(
@@ -653,6 +652,7 @@ fun ComparisonFullScreen1(
     onBackClick: () -> Unit
 ) {
     val result = benchmarkGpus.compareGpus(gpu1, gpu2)
+    val winner = determineGpuWinner(gpu1, gpu2, result)
 
     Column(
         modifier = Modifier
@@ -712,11 +712,128 @@ fun ComparisonFullScreen1(
                     gpu2Name = gpu2.name,
                     result = result
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                GpuWinnerCard(winner = winner)
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
 }
+
+private fun determineGpuWinner(gpu1: Gpu, gpu2: Gpu, result: Map<String, List<String>>): GpuWinner {
+    var gpu1Score = 0
+    var gpu2Score = 0
+
+    result.forEach { (category, values) ->
+        val diff = values[3]
+        when {
+            diff.startsWith("+") -> gpu1Score++ // GPU1 ganhou
+            diff.startsWith("-") -> gpu2Score++ // GPU2 ganhou
+        }
+    }
+
+    return when {
+        gpu1Score > gpu2Score -> GpuWinner(
+            winner = gpu1,
+            loser = gpu2,
+            score = "$gpu1Score x $gpu2Score",
+            advantage = getGpuMainAdvantage(gpu1, gpu2, result)
+        )
+        gpu2Score > gpu1Score -> GpuWinner(
+            winner = gpu2,
+            loser = gpu1,
+            score = "$gpu2Score x $gpu1Score",
+            advantage = getGpuMainAdvantage(gpu2, gpu1, result)
+        )
+        else -> GpuWinner(
+            winner = null, // Empate
+            loser = null,
+            score = "EMPATE",
+            advantage = "Performance equivalente"
+        )
+    }
+}
+
+private fun getGpuMainAdvantage(winner: Gpu, loser: Gpu, result: Map<String, List<String>>): String {
+    var advantages = mutableListOf<String>()
+
+    result.forEach { (category, values) ->
+        val diff = values[3]
+        if (diff.startsWith("+")) {
+            when (category) {
+                "Performance" -> advantages.add("Performance Geral")
+                "Gaming" -> advantages.add("Desempenho em Jogos")
+                "VRAM" -> advantages.add("Mais Memória VRAM")
+                "Clock Speed" -> advantages.add("Maior Velocidade")
+                "Eficiência" -> advantages.add("Eficiência Energética")
+                "🌡️ Temperatura" -> advantages.add("Temperatura Mais Baixa")
+                "💡 Consumo" -> advantages.add("Menor Consumo")
+            }
+        }
+    }
+
+    return when {
+        advantages.contains("Desempenho em Jogos") -> "Melhor para Gaming"
+        advantages.contains("Performance Geral") -> "Performance Superior"
+        advantages.contains("Mais Memória VRAM") -> "Mais VRAM para Texturas"
+        advantages.contains("Maior Velocidade") -> "Clocks Mais Altos"
+        advantages.contains("Temperatura Mais Baixa") -> "Mais Fria e Eficiente"
+        advantages.contains("Menor Consumo") -> "Mais Econômica"
+        advantages.isNotEmpty() -> "Vantagem em ${advantages.first()}"
+        else -> "Excelente Performance"
+    }
+}
+
+@Composable
+fun GpuWinnerCard(winner: GpuWinner) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = if (winner.winner == null) Color.Yellow.copy(alpha = 0.2f)
+            else Color.Green.copy(alpha = 0.2f)
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (winner.winner == null) {
+                Text(
+                    "⚖️ EMPATE TÉCNICO",
+                    color = Color.Yellow,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    "As duas GPUs têm performance muito similar",
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                Text(
+                    "🏆 VENCEDOR: ${winner.winner.name}",
+                    color = Color.Green,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    "Placar: ${winner.score} • ${winner.advantage}",
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+data class GpuWinner(
+    val winner: Gpu?, // null = empate
+    val loser: Gpu?,
+    val score: String,
+    val advantage: String
+)
 
 @Composable
 fun ComparisonTableView1(

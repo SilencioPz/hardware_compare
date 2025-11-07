@@ -108,7 +108,7 @@ fun GamePerformanceScreen(
             .fillMaxSize()
             .background(Color.Black)
             .padding(16.dp)
-            .padding(top = 16.dp)
+            .padding(top = 16.dp, bottom = 64.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -162,7 +162,8 @@ fun GamePerformanceScreen(
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {

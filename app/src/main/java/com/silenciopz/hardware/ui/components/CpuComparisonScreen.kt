@@ -215,7 +215,7 @@ fun CpuComparisonScreen(
                         start = if (isLandscape) 8.dp else 16.dp,
                         end = if (isLandscape) 8.dp else 16.dp,
                         top = if (isLandscape) 8.dp else 16.dp,
-                        bottom = if (isLandscape) 24.dp else 48.dp
+                        bottom = if (isLandscape) 32.dp else 64.dp
                     )
             ) {
                 CompareButton(
