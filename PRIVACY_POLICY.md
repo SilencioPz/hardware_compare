@@ -15,4 +15,4 @@ O app não requer permissões especiais do dispositivo.
 ## 📞 Contato
 Para dúvidas sobre privacidade: thesilencepzbr777@gmail.com
 
-Última atualização: 05/11/2025
+Última atualização: 06/11/2025

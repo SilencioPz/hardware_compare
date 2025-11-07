@@ -1,3 +1,5 @@
+English Version of the app: coming soon...
+
 # 🛠️ SILENCIO HARDWARE STORE
 
 ## O APP DOS COMPARATIVOS DE HARDWARE QUE VAI TURBINAR SEU PC!
