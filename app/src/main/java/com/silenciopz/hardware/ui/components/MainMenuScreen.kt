@@ -90,7 +90,7 @@ fun MainMenuScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            "Versão 1.0.0",
+            "Versão 1.0.6",
             color = Color.Gray,
             fontSize = 12.sp,
             modifier = Modifier.fillMaxWidth(),
